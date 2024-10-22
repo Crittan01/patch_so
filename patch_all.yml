@@ -1,0 +1,20 @@
+---
+- name: Parcheo de servidores CentOS, Ubuntu y Windows
+  hosts: all_servers
+  gather_facts: true
+
+  tasks:
+    - name: Rol Parcheo CENTOS
+      ansible.builtin.include_role:
+        name: patch_centos
+      when: ansible_facts['os_family'] == 'RedHat'
+
+    - name: Rol Parcheo UBUNTU
+      ansible.builtin.include_role:
+        name: patch_ubuntu
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Rol Parcheo WINDOWS
+      ansible.builtin.include_role:
+        name: patch_windows
+      when: ansible_facts['os_family'] == 'Windows'

@@ -1,0 +1,9 @@
+---
+# tasks file for roles/patch_centos
+
+# 1. Actualizar todos los paquetes en CentOS
+- name: Actualizar todos los paquetes en CentOS
+  ansible.builtin.yum:
+    name: "*"
+    state: latest
+  become: true

@@ -1,0 +1,11 @@
+---
+- name: Parcheo de servidores Ubuntu
+  hosts: ubuntu_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Rol Parcheo UBUNTU
+      ansible.builtin.include_role:
+        name: patch_ubuntu
+      when: ansible_facts['os_family'] == 'Debian'

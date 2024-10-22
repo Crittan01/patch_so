@@ -1,0 +1,30 @@
+[centos_servers]
+centos7
+
+[ubuntu_servers]
+ubuntu24
+
+[windows_servers]
+win2016_sql
+
+[local_server]
+rhel8awx
+
+# Todos los servidores
+
+[all_servers:children]
+centos_servers
+ubuntu_servers
+windows_servers
+
+[all_servers:vars]
+ansible_connection=ssh
+
+[windows_servers:vars]
+ansible_host = 192.168.20.254
+ansible_user = ansible
+ansible_password = ansible123
+ansible_connection = winrm
+ansible_winrm_transport=ntlm
+ansible_winrm_port=5986
+ansible_winrm_server_cert_validation = ignore

@@ -1,0 +1,46 @@
+---
+# tasks file for roles/patch_windows
+
+# 1. Bloque de Ejecución de Parches y Reinicio en Windows
+- name: Bloque de Ejecucion de {{ inventory_hostname }}
+  block:
+    # Recolectar información sobre reinicios pendientes
+    - name: Recolectar FACTS sobre reinicio pendiente
+      ansible.builtin.setup:
+        filter:
+          - ansible_reboot_pending
+      register: fact_reboot
+
+    # Mostrar si el reinicio es necesario
+    - name: Comprobar si la Maquina necesita reiniciarse
+      ansible.builtin.debug:
+        msg: "La maquina {{ inventory_hostname }} requiere reinicio: {{ fact_reboot.ansible_facts.ansible_reboot_pending }}"
+
+    # Reiniciar si es necesario antes de aplicar nuevas actualizaciones
+    - name: Reiniciar la maquina si es necesario
+      ansible.windows.win_reboot:
+        msg: "Reiniciando la maquina después de aplicar parches."
+        reboot_timeout: "{{ reinicio_maquina_timeout | default(600) }}"
+      when: fact_reboot.ansible_facts.ansible_reboot_pending | default(false)
+
+    # Descargar actualizaciones de seguridad
+    - name: Obtener y descargar actualizaciones pendientes
+      ansible.windows.win_updates:
+        category_names:
+          - "SecurityUpdates"
+        state: downloaded
+      register: download_results
+      retries: 3
+      delay: 30
+
+    # Mostrar cuántas actualizaciones se han descargado
+    - name: Mostrar el número de actualizaciones descargadas
+      ansible.builtin.debug:
+        msg: "Número de actualizaciones descargadas: {{ download_results.found_update_count | default(0) }}"
+
+    # Instalar actualizaciones y reiniciar si es necesario
+    - name: Instalar actualizaciones en Windows
+      ansible.windows.win_updates:
+        category_names:
+          - SecurityUpdates
+        reboot: true

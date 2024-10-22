@@ -1,0 +1,11 @@
+---
+- name: Parcheo de servidores CentOS
+  hosts: centos_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Rol Parcheo CENTOS
+      ansible.builtin.include_role:
+        name: patch_centos
+      when: ansible_facts['os_family'] == 'RedHat'

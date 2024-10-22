@@ -1,0 +1,9 @@
+---
+# tasks file for roles/patch_ubuntu
+
+- name: Actualizar todos los paquetes en Ubuntu
+  ansible.builtin.apt:
+    name: "*"
+    update_cache: true
+    state: latest
+  become: true
