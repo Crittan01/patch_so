@@ -1,5 +1,5 @@
 [centos_servers]
-centos7
+centos8s
 
 [ubuntu_servers]
 ubuntu24
